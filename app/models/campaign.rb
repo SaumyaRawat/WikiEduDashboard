@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'csv'
 # == Schema Information
 #
@@ -53,7 +54,7 @@ class Campaign < ActiveRecord::Base
 
   def users_to_csv(role, opts = {})
     csv_data = []
-    courses.each do |course|
+    courses.nonprivate.each do |course|
       users = course.send(role)
       users.each do |user|
         line = [user.username]
@@ -93,7 +94,7 @@ class Campaign < ActiveRecord::Base
     return if start.nil? && self.end.nil?
 
     # If any are present, all must be valid and self-consistent.
-    [:start, :end].each do |date_type|
+    %i[start end].each do |date_type|
       validate_date_attribute(date_type)
     end
 

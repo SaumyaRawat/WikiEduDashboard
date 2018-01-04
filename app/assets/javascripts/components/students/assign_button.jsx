@@ -1,48 +1,43 @@
 import React from 'react';
+import createReactClass from 'create-react-class';
+import PropTypes from 'prop-types';
 import Select from 'react-select';
+import { connect } from "react-redux";
+
 import PopoverExpandable from '../high_order/popover_expandable.jsx';
 import Popover from '../common/popover.jsx';
 import Lookup from '../common/lookup.jsx';
-import Confirm from '../common/confirm.jsx';
-import ConfirmActions from '../../actions/confirm_actions.js';
-import ConfirmationStore from '../../stores/confirmation_store.js';
+import { initiateConfirm } from '../../actions/confirm_actions';
 import ServerActions from '../../actions/server_actions.js';
 import AssignmentActions from '../../actions/assignment_actions.js';
 import AssignmentStore from '../../stores/assignment_store.js';
 import CourseUtils from '../../utils/course_utils.js';
-import shallowCompare from 'react-addons-shallow-compare';
 
-const AssignButton = React.createClass({
+const AssignButton = createReactClass({
   displayName: 'AssignButton',
 
   propTypes: {
-    course: React.PropTypes.object.isRequired,
-    role: React.PropTypes.number.isRequired,
-    student: React.PropTypes.object,
-    current_user: React.PropTypes.object,
-    course_id: React.PropTypes.string.isRequired,
-    is_open: React.PropTypes.bool,
-    permitted: React.PropTypes.bool,
-    add_available: React.PropTypes.bool,
-    assignments: React.PropTypes.array,
-    open: React.PropTypes.func.isRequired,
-    tooltip_message: React.PropTypes.string
+    course: PropTypes.object.isRequired,
+    role: PropTypes.number.isRequired,
+    student: PropTypes.object,
+    current_user: PropTypes.object,
+    course_id: PropTypes.string.isRequired,
+    is_open: PropTypes.bool,
+    permitted: PropTypes.bool,
+    add_available: PropTypes.bool,
+    assignments: PropTypes.array,
+    open: PropTypes.func.isRequired,
+    tooltip_message: PropTypes.string,
+    initiateConfirm: PropTypes.func
   },
-
-  mixins: [ConfirmationStore.mixin],
 
   getInitialState() {
     return ({
       showOptions: false,
       language: this.props.course.home_wiki.language,
       project: this.props.course.home_wiki.project,
-      title: '',
-      showConfirm: false
+      title: ''
     });
-  },
-
-  shouldComponentUpdate(nextProps, nextState) {
-    return shallowCompare(this, nextProps, nextState);
   },
 
   getKey() {
@@ -53,7 +48,7 @@ const AssignButton = React.createClass({
     return tag;
   },
 
-  storeDidChange() {
+  resetState() {
     return this.setState(this.getInitialState());
   },
 
@@ -142,11 +137,6 @@ const AssignButton = React.createClass({
       AssignmentActions.addAssignment(assignment);
       // Post the new assignment to the server
       ServerActions.addAssignment(assignment);
-      // Send the confirm signal
-      return ConfirmActions.actionConfirmed();
-    };
-    const onCancel = function () {
-      return ConfirmActions.actionCancelled();
     };
 
     let confirmMessage;
@@ -162,8 +152,7 @@ const AssignButton = React.createClass({
         title: articleTitle
       });
     }
-
-    this.setState({ onConfirm, onCancel, confirmMessage, showConfirm: true });
+    return this.props.initiateConfirm(confirmMessage, onConfirm);
   },
 
   unassign(assignment) {
@@ -175,17 +164,6 @@ const AssignButton = React.createClass({
   },
 
   render() {
-    let confirmationDialog;
-    if (this.state.showConfirm) {
-      confirmationDialog = (
-        <Confirm
-          onConfirm={this.state.onConfirm}
-          onCancel={this.state.onCancel}
-          message={this.state.confirmMessage}
-        />
-      );
-    }
-
     let className = 'button border small assign-button';
     if (this.props.is_open) { className += ' dark'; }
 
@@ -241,7 +219,7 @@ const AssignButton = React.createClass({
       let removeButton;
       let articleLink;
       ass.course_id = this.props.course_id;
-      const article = CourseUtils.articleFromAssignment(ass);
+      const article = CourseUtils.articleFromAssignment(ass, this.props.course.home_wiki);
       if (this.props.permitted) {
         removeButton = <button className="button border plus" onClick={this.unassign.bind(this, ass)}>-</button>;
       }
@@ -326,7 +304,6 @@ const AssignButton = React.createClass({
 
     return (
       <div className="pop__container" onClick={this.stop}>
-        {confirmationDialog}
         {showButton}
         {editButton}
         <Popover
@@ -340,4 +317,8 @@ const AssignButton = React.createClass({
 }
 );
 
-export default PopoverExpandable(AssignButton);
+const mapDispatchToProps = { initiateConfirm };
+
+export default connect(null, mapDispatchToProps)(
+  PopoverExpandable(AssignButton)
+);

@@ -1,14 +1,14 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import createReactClass from 'create-react-class';
+import PropTypes from 'prop-types';
+import { connect } from "react-redux";
 import { Link } from 'react-router';
 
-import CourseStore from '../../stores/course_store.js';
-import UserCoursesStore from '../../stores/user_courses_store.js';
-import CourseActions from '../../actions/course_actions.js';
 import ValidationStore from '../../stores/validation_store.js';
 import ValidationActions from '../../actions/validation_actions.js';
-import CourseCreationActions from '../../actions/course_creation_actions.js';
+import { fetchCampaign, updateCourse, submitCourse, cloneCourse } from '../../actions/course_creation_actions.js';
 import ServerActions from '../../actions/server_actions.js';
+import { fetchCoursesForUser } from "../../actions/user_courses_actions.js";
 
 import Notifications from '../common/notifications.jsx';
 import Modal from '../common/modal.jsx';
@@ -17,25 +17,32 @@ import DatePicker from '../common/date_picker.jsx';
 import TextAreaInput from '../common/text_area_input.jsx';
 import CourseUtils from '../../utils/course_utils.js';
 import CourseDateUtils from '../../utils/course_date_utils.js';
-import TransitionGroup from 'react-addons-css-transition-group';
+import TransitionGroup from 'react-transition-group/CSSTransitionGroup';
+import CourseLevelSelector from './course_level_selector.jsx';
 
 import _ from 'lodash';
 
-import { getUserId } from '../../stores/user_id_store.js';
-import { getDefaultCourseType, getCourseStringPrefix, getUseStartAndEndTimes } from '../../stores/course_attributes_store';
-
 const getState = () => {
   return {
-    course: CourseStore.getCourse(),
-    error_message: ValidationStore.firstMessage(),
-    user_courses: _.reject(UserCoursesStore.getUserCourses(), { type: 'LegacyCourse' })
+    error_message: ValidationStore.firstMessage()
   };
 };
 
-const CourseCreator = React.createClass({
+const CourseCreator = createReactClass({
   displayName: 'CourseCreator',
 
-  mixins: [CourseStore.mixin, ValidationStore.mixin, UserCoursesStore.mixin],
+  propTypes: {
+    course: PropTypes.object.isRequired,
+    user_courses: PropTypes.array.isRequired,
+    fetchCoursesForUser: PropTypes.func.isRequired,
+    courseCreator: PropTypes.object.isRequired,
+    updateCourse: PropTypes.func.isRequired,
+    submitCourse: PropTypes.func.isRequired,
+    fetchCampaign: PropTypes.func.isRequired,
+    cloneCourse: PropTypes.func.isRequired
+  },
+
+  mixins: [ValidationStore.mixin],
 
   getInitialState() {
     const inits = {
@@ -43,24 +50,31 @@ const CourseCreator = React.createClass({
       isSubmitting: false,
       showCourseForm: false,
       showCloneChooser: false,
-      default_course_type: getDefaultCourseType(),
-      course_string_prefix: getCourseStringPrefix(),
-      use_start_and_end_times: getUseStartAndEndTimes()
+      default_course_type: this.props.courseCreator.defaultCourseType,
+      course_string_prefix: this.props.courseCreator.courseStringPrefix,
+      use_start_and_end_times: this.props.courseCreator.useStartAndEndTimes
     };
 
-    return $.extend({}, inits, getState());
+    return { ...inits, ...getState() };
   },
 
   componentWillMount() {
-    CourseActions.addCourse();
-
     // If a campaign slug is provided, fetch the campaign.
     const campaignParam = this.campaignParam();
     if (campaignParam) {
-      CourseCreationActions.fetchCampaign(campaignParam);
+      this.props.fetchCampaign(campaignParam);
     }
+    this.props.fetchCoursesForUser(currentUser.id);
+  },
 
-    return ServerActions.fetchCoursesForUser(getUserId());
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.course.school !== '' && nextProps.course.title !== '') {
+      this.state.tempCourseId = CourseUtils.generateTempId(nextProps.course);
+    }
+    else {
+      this.state.tempCourseId = '';
+    }
+    return this.handleCourse(nextProps.course);
   },
 
   campaignParam() {
@@ -73,13 +87,7 @@ const CourseCreator = React.createClass({
 
   storeDidChange() {
     this.setState(getState());
-    if (this.state.course.school !== '' && this.state.title !== '') {
-      this.state.tempCourseId = CourseUtils.generateTempId(this.state.course);
-    }
-    else {
-      this.state.tempCourseId = '';
-    }
-    return this.handleCourse();
+    this.handleCourse(this.props.course);
   },
 
   saveCourse() {
@@ -90,33 +98,33 @@ const CourseCreator = React.createClass({
         CourseUtils.i18n('creator.checking_for_uniqueness', this.state.course_string_prefix),
         true
       );
-      return ServerActions.checkCourse('exists', CourseUtils.generateTempId(this.state.course));
+      return ServerActions.checkCourse('exists', CourseUtils.generateTempId(this.props.course));
     }
   },
 
-  handleCourse() {
+  handleCourse(course) {
     if (this.state.shouldRedirect === true) {
-      window.location = `/courses/${this.state.course.slug}?modal=true`;
+      window.location = `/courses/${course.slug}`;
+      return this.setState({ shouldRedirect: false });
     }
     if (!this.state.isSubmitting && !this.state.justSubmitted) { return; }
-
     if (ValidationStore.isValid()) {
-      if (this.state.course.slug && this.state.justSubmitted) {
+      if (course.slug && this.state.justSubmitted) {
         // This has to be a window.location set due to our limited ReactJS scope
         if (this.state.default_course_type === 'ClassroomProgramCourse') {
-          window.location = `/courses/${this.state.course.slug}/timeline/wizard`;
+          window.location = `/courses/${course.slug}/timeline/wizard`;
         } else {
-          window.location = `/courses/${this.state.course.slug}`;
+          window.location = `/courses/${course.slug}`;
         }
       } else if (!this.state.justSubmitted) {
-        this.setState({ course: CourseUtils.cleanupCourseSlugComponents(this.state.course) });
+        this.setState({ course: CourseUtils.cleanupCourseSlugComponents(course) });
         this.setState({ isSubmitting: false });
         this.setState({ justSubmitted: true });
         // If the save callback fails, which will happen if an invalid wiki is submitted,
         // then we must reset justSubmitted so that the user can fix the problem
         // and submit again.
         const onSaveFailure = () => this.setState({ justSubmitted: false });
-        ServerActions.saveCourse($.extend(true, {}, { course: this.state.course }), null, onSaveFailure);
+        this.props.submitCourse({ course }, onSaveFailure);
       }
     } else if (!ValidationStore.getValidation('exists').valid) {
       this.setState({ isSubmitting: false });
@@ -124,21 +132,25 @@ const CourseCreator = React.createClass({
   },
 
   updateCourse(key, value) {
-    const courseAttrs = $.extend(true, {}, this.state.course);
-    courseAttrs[key] = value;
-    CourseActions.updateCourse(courseAttrs);
+    this.props.updateCourse({ [key]: value });
     if (_.includes(['title', 'school', 'term'], key)) {
       return ValidationActions.setValid('exists');
     }
   },
 
   updateCourseDates(key, value) {
-    const updatedCourse = CourseDateUtils.updateCourseDates(this.state.course, key, value);
-    CourseActions.updateCourse(updatedCourse);
+    const updatedCourse = CourseDateUtils.updateCourseDates(this.props.course, key, value);
+    this.props.updateCourse(updatedCourse);
+  },
+
+  updateCoursePrivacy(e) {
+    const isPrivate = e.target.checked;
+    this.props.updateCourse({ private: isPrivate });
+    this.updateCourse('private', isPrivate);
   },
 
   expectedStudentsIsValid() {
-    if (this.state.course.expected_students === '0' && this.state.default_course_type === 'ClassroomProgramCourse') {
+    if (this.props.course.expected_students === '0' && this.state.default_course_type === 'ClassroomProgramCourse') {
       ValidationActions.setInvalid('expected_students', I18n.t('application.field_required'));
       return false;
     }
@@ -146,8 +158,8 @@ const CourseCreator = React.createClass({
   },
 
   dateTimesAreValid() {
-    const startDateTime = new Date(this.state.course.start);
-    const endDateTime = new Date(this.state.course.end);
+    const startDateTime = new Date(this.props.course.start);
+    const endDateTime = new Date(this.props.course.end);
 
     if (startDateTime >= endDateTime) {
       ValidationActions.setInvalid('end', I18n.t('application.field_invalid_date_time'));
@@ -169,9 +181,9 @@ const CourseCreator = React.createClass({
   },
 
   useThisClass() {
-    const select = ReactDOM.findDOMNode(this.refs.courseSelect);
+    const select = this.courseSelect;
     const courseId = select.options[select.selectedIndex].getAttribute('data-id-key');
-    ServerActions.cloneCourse(courseId);
+    this.props.cloneCourse(courseId);
     return this.setState({ isSubmitting: true, shouldRedirect: true });
   },
 
@@ -181,7 +193,7 @@ const CourseCreator = React.createClass({
     let showCloneChooser;
     let showNewOrClone;
     // If user has no courses, just open the CourseForm immediately because there are no cloneable courses.
-    if (this.state.user_courses.length === 0) {
+    if (this.props.user_courses.length === 0) {
       showCourseForm = true;
     // If the creator was launched from a campaign, do not offer the cloning option.
     } else if (this.campaignParam()) {
@@ -215,12 +227,14 @@ const CourseCreator = React.createClass({
     const cloneOptions = showNewOrClone ? '' : ' hidden';
     const controlClass = `wizard__panel__controls ${courseFormClass}`;
     const selectClass = showCloneChooser ? '' : ' hidden';
-    const options = this.state.user_courses.map((course, i) => <option key={i} data-id-key={course.id}>{course.title}</option>);
+    const options = this.props.user_courses.map((course, i) => <option key={i} data-id-key={course.id}>{course.title}</option>);
     const selectClassName = `select-container ${selectClass}`;
 
     let term;
     let subject;
     let expectedStudents;
+    let courseLevel;
+    let roleDescription;
 
     let descriptionRequired = false;
     if (this.state.default_course_type === 'ClassroomProgramCourse') {
@@ -229,7 +243,7 @@ const CourseCreator = React.createClass({
         <TextInput
           id="course_term"
           onChange={this.updateCourse}
-          value={this.state.course.term}
+          value={this.props.course.term}
           value_key="term"
           required
           validation={CourseUtils.courseSlugRegex()}
@@ -238,11 +252,17 @@ const CourseCreator = React.createClass({
           placeholder={CourseUtils.i18n('creator.course_term_placeholder', this.state.course_string_prefix)}
         />
       );
+      courseLevel = (
+        <CourseLevelSelector
+          level={this.props.course.level}
+          updateCourse={this.updateCourse}
+        />
+      );
       subject = (
         <TextInput
           id="course_subject"
           onChange={this.updateCourse}
-          value={this.state.course.subject}
+          value={this.props.course.subject}
           value_key="subject"
           editable
           label={CourseUtils.i18n('creator.course_subject', this.state.course_string_prefix)}
@@ -253,7 +273,7 @@ const CourseCreator = React.createClass({
         <TextInput
           id="course_expected_students"
           onChange={this.updateCourse}
-          value={String(this.state.course.expected_students)}
+          value={String(this.props.course.expected_students)}
           value_key="expected_students"
           editable
           required
@@ -263,17 +283,29 @@ const CourseCreator = React.createClass({
           placeholder={CourseUtils.i18n('creator.expected_number', this.state.course_string_prefix)}
         />
       );
+      roleDescription = (
+        <TextInput
+          id="role_description"
+          onChange={this.updateCourse}
+          value={this.props.course.role_description}
+          value_key="role_description"
+          editable
+          label={I18n.t('courses.creator.role_description')}
+          placeholder={I18n.t('courses.creator.role_description_placeholder')}
+        />
+      );
     }
 
     let language;
     let project;
+    let privacyCheckbox;
     let campaign;
     if (this.state.default_course_type !== 'ClassroomProgramCourse') {
       language = (
         <TextInput
           id="course_language"
           onChange={this.updateCourse}
-          value={this.state.course.language}
+          value={this.props.course.language}
           value_key="language"
           editable
           label={I18n.t('courses.creator.course_language')}
@@ -284,30 +316,43 @@ const CourseCreator = React.createClass({
         <TextInput
           id="course_project"
           onChange={this.updateCourse}
-          value={this.state.course.project}
+          value={this.props.course.project}
           value_key="project"
           editable
           label={I18n.t('courses.creator.course_project')}
           placeholder="wikipedia"
         />
       );
+      privacyCheckbox = (
+        <div className="form-group">
+          <label htmlFor="course_private">{I18n.t('courses.creator.course_private')}:</label>
+          <input
+            id="course_private"
+            type="checkbox"
+            value={true}
+            onChange={this.updateCoursePrivacy}
+            checked={!!this.props.course.private}
+          />
+        </div>
+      );
     }
-    if (this.state.course.initial_campaign_title) {
+    if (this.props.course.initial_campaign_title) {
       campaign = (
         <TextInput
-          value={this.state.course.initial_campaign_title}
+          value={this.props.course.initial_campaign_title}
           label={I18n.t('campaign.campaign')}
         />
       );
     }
 
-    const dateProps = CourseDateUtils.dateProps(this.state.course);
+    const dateProps = CourseDateUtils.dateProps(this.props.course);
 
     const timeZoneMessage = (
       <p className="form-help-text">
         {I18n.t('courses.time_zone_message')}
       </p>
     );
+
     return (
       <TransitionGroup
         transitionName="wizard"
@@ -326,7 +371,7 @@ const CourseCreator = React.createClass({
                 <button className="button dark" onClick={this.showCloneChooser}>{CourseUtils.i18n('creator.clone_previous', this.state.course_string_prefix)}</button>
               </div>
               <div className={selectClassName}>
-                <select id="reuse-existing-course-select" ref="courseSelect">{options}</select>
+                <select id="reuse-existing-course-select" ref={(dropdown) => { this.courseSelect = dropdown; }}>{options}</select>
                 <button className="button dark" onClick={this.useThisClass}>{CourseUtils.i18n('creator.clone_this', this.state.course_string_prefix)}</button>
                 <button className="button dark right" onClick={this.cancelClone}>{CourseUtils.i18n('cancel', this.state.course_string_prefix)}</button>
               </div>
@@ -337,7 +382,7 @@ const CourseCreator = React.createClass({
                   <TextInput
                     id="course_title"
                     onChange={this.updateCourse}
-                    value={this.state.course.title}
+                    value={this.props.course.title}
                     value_key="title"
                     required
                     validation={CourseUtils.courseSlugRegex()}
@@ -348,7 +393,7 @@ const CourseCreator = React.createClass({
                   <TextInput
                     id="course_school"
                     onChange={this.updateCourse}
-                    value={this.state.course.school}
+                    value={this.props.course.school}
                     value_key="school"
                     required
                     validation={CourseUtils.courseSlugRegex()}
@@ -357,16 +402,18 @@ const CourseCreator = React.createClass({
                     placeholder={CourseUtils.i18n('creator.course_school', this.state.course_string_prefix)}
                   />
                   {term}
+                  {courseLevel}
                   {subject}
                   {expectedStudents}
                   {language}
                   {project}
+                  {privacyCheckbox}
                 </div>
                 <div className="column">
                   <DatePicker
                     id="course_start"
                     onChange={this.updateCourseDates}
-                    value={this.state.course.start}
+                    value={this.props.course.start}
                     value_key="start"
                     required
                     editable
@@ -379,7 +426,7 @@ const CourseCreator = React.createClass({
                   <DatePicker
                     id="course_end"
                     onChange={this.updateCourseDates}
-                    value={this.state.course.end}
+                    value={this.props.course.end}
                     value_key="end"
                     required
                     editable
@@ -387,20 +434,22 @@ const CourseCreator = React.createClass({
                     placeholder={I18n.t('courses.creator.end_date_placeholder')}
                     blank
                     date_props={dateProps.end}
-                    enabled={!!this.state.course.start}
+                    enabled={!!this.props.course.start}
                     isClearable={false}
                     showTime={this.state.use_start_and_end_times}
                   />
                   {this.state.use_start_and_end_times ? timeZoneMessage : null}
+                  <span className="text-input-component__label"><strong>{CourseUtils.i18n('creator.course_description', this.state.course_string_prefix)}:</strong></span>
                   <TextAreaInput
                     id="course_description"
                     onChange={this.updateCourse}
-                    value={this.state.course.description}
+                    value={this.props.course.description}
                     value_key="description"
                     required={descriptionRequired}
                     editable
-                    placeholder={CourseUtils.i18n('creator.course_description', this.state.course_string_prefix)}
+                    placeholder={CourseUtils.i18n('creator.course_description_placeholder', this.state.course_string_prefix)}
                   />
+                  {roleDescription}
                 </div>
               </div>
               <div className={controlClass}>
@@ -418,5 +467,22 @@ const CourseCreator = React.createClass({
     );
   }
 });
+
+const mapStateToProps = state => ({
+  course: state.course,
+  courseCreator: state.courseCreator,
+  user_courses: _.reject(state.userCourses.userCourses, { type: "LegacyCourse" })
+});
+
+const mapDispatchToProps = ({
+  fetchCampaign,
+  fetchCoursesForUser,
+  updateCourse,
+  submitCourse,
+  cloneCourse
+});
+
+// exporting two difference ways as a testing hack.
+export const ConnectedCourseCreator = connect(mapStateToProps, mapDispatchToProps)(CourseCreator);
 
 export default CourseCreator;

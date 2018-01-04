@@ -2,7 +2,6 @@
 
 require 'oauth'
 require "#{Rails.root}/lib/wiki_edits"
-require "#{Rails.root}/lib/wiki_course_edits"
 require "#{Rails.root}/lib/list_course_manager"
 require "#{Rails.root}/lib/tag_manager"
 require "#{Rails.root}/lib/course_creation_manager"
@@ -14,22 +13,21 @@ require "#{Rails.root}/app/workers/announce_course_worker"
 class CoursesController < ApplicationController
   include CourseHelper
   respond_to :html, :json
-  before_action :require_permissions,
-                only: [
-                  :create,
-                  :update,
-                  :destroy,
-                  :notify_untrained,
-                  :update_syllabus,
-                  :delete_all_weeks
-                ]
+  before_action :require_permissions, only: %i[create
+                                               update
+                                               destroy
+                                               notify_untrained
+                                               update_syllabus
+                                               delete_all_weeks]
 
   ################
   # CRUD methods #
   ################
 
   def create
-    course_creation_manager = CourseCreationManager.new(course_params, wiki_params, initial_campaign_params, current_user)
+    course_creation_manager = CourseCreationManager.new(course_params, wiki_params,
+                                                        initial_campaign_params,
+                                                        instructor_role_description, current_user)
     unless course_creation_manager.valid?
       render json: { message: course_creation_manager.invalid_reason },
              status: 404
@@ -44,7 +42,8 @@ class CoursesController < ApplicationController
     validate
     handle_course_announcement(@course.instructors.first)
     slug_from_params if should_set_slug?
-    @course.update course: course_params
+    @course.update course_params
+    set_timeline_enabled
     ensure_passcode_set
     UpdateCourseWorker.schedule_edits(course: @course, editing_user: current_user)
     render json: { course: @course }
@@ -63,7 +62,9 @@ class CoursesController < ApplicationController
   def show
     @course = find_course_by_slug("#{params[:school]}/#{params[:titleterm]}")
     verify_edit_credentials { return }
+    protect_privacy { return }
     set_endpoint
+    set_limit
 
     respond_to do |format|
       format.html { render }
@@ -170,11 +171,11 @@ class CoursesController < ApplicationController
   end
 
   def should_set_slug?
-    %i(title school).all? { |key| params[:course].key?(key) }
+    %i[title school].all? { |key| params[:course].key?(key) }
   end
 
   def slug_from_params(course = params[:course])
-    slug = String.new("#{course[:school]}/#{course[:title]}")
+    slug = +"#{course[:school]}/#{course[:title]}"
     slug << "_(#{course[:term]})" unless course[:term].blank?
 
     course[:slug] = slug.tr(' ', '_')
@@ -197,17 +198,32 @@ class CoursesController < ApplicationController
       .permit(:language, :project)
   end
 
+  def set_timeline_enabled
+    case params.dig(:course, :timeline_enabled)
+    when true
+      @course.flags[:timeline_enabled] = true
+      @course.save
+    when false
+      @course.flags[:timeline_enabled] = false
+      @course.save
+    end
+  end
+
   def course_params
     params
       .require(:course)
       .permit(:id, :title, :description, :school, :term, :slug, :subject,
               :expected_students, :start, :end, :submitted, :passcode,
               :timeline_start, :timeline_end, :day_exceptions, :weekdays,
-              :no_day_exceptions, :cloned_status, :type)
+              :no_day_exceptions, :cloned_status, :type, :level, :private)
   end
 
-  SHOW_ENDPOINTS = %w(articles assignments campaigns check course revisions tag tags
-                      timeline uploads users).freeze
+  def instructor_role_description
+    params.require(:course).permit(:role_description)[:role_description]
+  end
+
+  SHOW_ENDPOINTS = %w[articles assignments campaigns categories check course
+                      revisions tag tags timeline uploads users].freeze
   # Show responds to multiple endpoints to provide different sets of json data
   # about a course. Checking for a valid endpoint prevents an arbitrary render
   # vulnerability.
@@ -215,15 +231,27 @@ class CoursesController < ApplicationController
     @endpoint = params[:endpoint] if SHOW_ENDPOINTS.include?(params[:endpoint])
   end
 
+  def set_limit
+    @limit = params[:limit] if (params[:endpoint] = 'revisions')
+  end
+
   # If the user could make an edit to the course, this verifies that
   # their tokens are working. If their credentials are found to be invalid,
   # they get logged out immediately, and this method redirects them to the home
   # page, so that they don't make edits that fail upon save.
+  # We don't need to do this too often, though.
   def verify_edit_credentials
     return if Features.disable_wiki_output?
     return unless current_user&.can_edit?(@course)
+    return if current_user.wiki_token && current_user.updated_at > 12.hours.ago
     return if WikiEdits.new.oauth_credentials_valid?(current_user)
     redirect_to root_path
     yield
+  end
+
+  def protect_privacy
+    return unless @course.private
+    return if current_user&.can_edit?(@course)
+    raise ActionController::RoutingError, 'not found'
   end
 end

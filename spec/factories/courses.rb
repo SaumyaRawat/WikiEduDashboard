@@ -43,9 +43,11 @@
 #  needs_update          :boolean          default(FALSE)
 #  chatroom_id           :string(255)
 #  flags                 :text(65535)
+#  level                 :string(255)
+#  private               :boolean          default(FALSE)
 #
 
-FactoryGirl.define do
+FactoryBot.define do
   factory :course, class: 'ClassroomProgramCourse' do
     start Date.new(2015, 1, 1)
     self.end Date.new(2015, 6, 1)

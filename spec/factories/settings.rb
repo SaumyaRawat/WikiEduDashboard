@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: settings
@@ -10,8 +11,7 @@
 #  updated_at :datetime         not null
 #
 
-
-FactoryGirl.define do
+FactoryBot.define do
   factory :setting do
   end
 end

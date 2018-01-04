@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'rails_helper'
 
 campaign_course_count = 10
@@ -14,7 +15,6 @@ describe 'campaign overview page', type: :feature, js: true do
   let(:user)  { create(:user) }
   let(:campaign) do
     create(:campaign,
-           id: 10001,
            title: 'Spring 2016 campaign',
            slug: slug,
            description: 'This is the best campaign')
@@ -203,7 +203,7 @@ describe 'campaign overview page', type: :feature, js: true do
           find('#campaign_end', visible: true) # field with the error should be visible
         end
 
-        it "updates the date fields properly, and to nil if the 'Use start and end dates' become unchecked" do
+        it 'updates the date fields properly, and unsets if #use_dates is unchecked' do
           find('.campaign-details .rails_editable-edit').click
           find('#use_dates').click
           fill_in('campaign_start', with: '2016-01-10')

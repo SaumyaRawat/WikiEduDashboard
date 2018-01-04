@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: user_profiles
@@ -13,7 +15,7 @@
 #  institution        :string(255)
 #
 
-FactoryGirl.define do
+FactoryBot.define do
   factory :user_profile do
   end
 end

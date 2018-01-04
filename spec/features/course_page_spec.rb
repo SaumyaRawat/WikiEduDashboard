@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'rails_helper'
 
 MILESTONE_BLOCK_KIND = 2
@@ -242,7 +243,7 @@ describe 'the course page', type: :feature, js: true do
       find('th.sortable', text: 'Class').click
       new_first_rating = page.first(:css, 'table.articles').first('td .rating p')
       expect(new_first_rating).to have_content '-'
-      title = page.first(:css, 'table.articles').first('td p.title')
+      title = page.first(:css, 'table.articles').first('td .title')
       expect(title).to have_content 'es:wiktionary:Article'
     end
 

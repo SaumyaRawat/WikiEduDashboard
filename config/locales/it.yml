@@ -7,6 +7,7 @@
 # Author: Einreiher
 # Author: Greis
 # Author: Macofe
+# Author: Martinligabue
 # Author: Matteocng
 # Author: Nemo bis
 # Author: NumaPompilius3
@@ -38,6 +39,7 @@ it:
     recent_activity: Attività recente
     report_problem: Segnala un problema
     search: chiedi una domanda
+    search_results: 'Risultati per: ''%{search_terms}'''
     sign_up_extended: Registrati con Wikipedia
     sign_up_log_in_extended: con Wikipedia
     sign_up: Registrati
@@ -56,7 +58,7 @@ it:
     no_courses_student: Sembra che non ti si è ancora iscritto a un corso.
     review_orientation: Esamina orientamento
     start_orientation: Inizia orientamento
-    blog_headline: Notizie recenti da Wiki Ed
+    blog_headline: Notizie recenti da Wiki Education
   home:
     explore: Esplora
     log_in: Accedi con Wikipedia
@@ -71,6 +73,7 @@ it:
     assigned_to: Assegnato a
     character_doc: La somma dei caratteri aggiunti alle voci dagli editori iscritti
       tra le date di inizio e fine
+    deleted: (cancellato)
     edited: Voci modificate
     edited_by: 'Modificato da:'
     edited_mobile: Voci
@@ -96,6 +99,9 @@ it:
       '?': Non classificato — una voce che non è stata ancora valutata sulla scala
         di qualità di Wikipedia
       does_not_exist: Questa voce non esiste su Wikipedia
+    show_current_version: Mostra versione attuale
+    show_current_version_with_authorship_highlighting: Versione attuale con evidenziazione
+      degli autori
     title: Titolo
     title_example: Titolo della voce
     view: Visualizza voce
@@ -135,6 +141,7 @@ it:
     select: Seleziona
   campaign:
     active_campaigns: Campagne attive
+    add_organizer: Aggiungi organizzatore
     all_campaigns: Tutte le campagne
     campaign: Campagna
     campaigns: Campagne
@@ -145,6 +152,12 @@ it:
     delete_campaign: Cancella questa campagna
     none: Nessuno
     title: Titolo
+  categories:
+    add_template: Aggiungi template
+    add_this_template: Aggiungi questo template
+    name: Nome
+    category_name: Nome della categoria
+    template_name: Nome template
   chat:
     label: Chat
   courses:
@@ -195,7 +208,7 @@ it:
         per cambiare stato tra deselezionato, selezionato e vacanza. Se non si hanno
         vacanze, seleziona "Non ho vacanze". La linea temporale clonata regolerà automaticamente
         le date per tenere conto di settimane che non hanno incontri programmati.'
-      clone_successful: Corso clonato correttamente
+      clone_successful: Aggiorna dettagli per il corso clonato
       clone_successful_details: Il corso è stato clonato, compresi gli elementi della
         cronologia degli eventi (settimane e blocchi). Assicurati di aggiungere le
         date, che non sono riportate. È stato cambiato altro del tuo corso? Non esitare  ad
@@ -220,9 +233,12 @@ it:
         e non possono essere modificati. Tutto il resto puoi modificarli in seguito.
         Clicca su "Crea il mio corso!" per iniziare a costruire la linea temporale
         per la tua assegnazione Wikipedia.
+      role_description: Il tuo ruolo nel corso
+      role_description_placeholder: Istruttore, assistente didattico, ecc
       save_cloned_course: Salva nuovo corso
       start_date: Data di inizio
       start_date_placeholder: Data di inizio (YYYY-MM-DD)
+      subject: Oggetto
     current: Corsi attuali
     delete_course: Cancella corso
     delete_suggestion: Cancella
@@ -242,6 +258,7 @@ it:
       invalid_language_or_project: Lingua/progetto non valido
       duplicate_slug: Un altro programma chiamato %{slug} esiste già.
     expected_students: Studenti previsti
+    feedback: Feedback
     instructor:
       one: Insegnante
       other: Insegnanti
@@ -261,6 +278,7 @@ it:
       di tutti gli studenti che sono in ritardo nel completare i moduli di formazione
       assegnati?
     no_available_actions: Nessuna azione disponibile
+    ores_plot: ORES
     overview: Pagina principale
     passcode: Codice di accesso
     published: 'Il tuo corso è stato pubblicato! Gli studenti possono iscriversi al
@@ -387,6 +405,7 @@ it:
     edit_description: Modifica descrizione
     edit_details: Modifica dettagli
   metrics:
+    last_update: Ultimo aggiornamento
     activity: Attività recente
     articles_created: Voci create
     articles_edited: Voci modificate
@@ -543,6 +562,7 @@ it:
     username: Nome utente
     username_placeholder: Nome utente
     role:
+      description: Ruolo nel corso
       visitor: Visitatore
       student: Studente
       instructor: Insegnante
@@ -550,11 +570,16 @@ it:
       online_volunteer: Volontario online
       wiki_ed_staff: Staff Wiki Ed
   user_profiles:
+    bio_placeholder: Aggiungi la tua biografia (opzionale)
     location_placeholder: Aggiungi la tua posizione (opzionale)
     institution_placeholder: Nome dell'istituto (opzionale)
+  wiki_edits:
+    notify_overdue:
+      confirm: Questo posterà un promemoria sulle pagine di discussione di tutti gli
+        studenti che sono in ritardo nella formazione. Sei sicuro di volerlo fare?
   wizard:
     assignment_dates: Date di assegnazione
-    assignment_type: Tipo di assegnazione
+    assignment_type: Cosa completeranno gli studenti per la loro assegnazione di Wikipedia?
     confirm_dates: Scegli le date dei corsi, incontri settimanali e le festività per
       il tuo corso.
     course_dates: Date del corso
@@ -580,10 +605,14 @@ it:
       il codice attuale per iscriversi a questo corso.
   error_404:
     header: Pagina non trovata. :-(
+  error_422:
+    header: 422 — entità non processabile.  :-(
+    explanation: Qualcosa è andato storto. Si prega di contattare i responsabili di
+      questa dashboard per informarli del problema.
   error_500:
     header: 500 — errore interno del server. :-(
-    explanation: Qualcosa è andato storto. Si prega di contattare i responsabili di
-      questo quadro per informarli del problema.
+    explanation: Qualcosa è andato storto. Contatta i manutentori di questo cruscotto
+      per informarli del problema.
   login_error:
     header: Errore durante l'accesso
     explanation: Sembra che ci sia un problema con il processo di accesso. (Ci dispiace!

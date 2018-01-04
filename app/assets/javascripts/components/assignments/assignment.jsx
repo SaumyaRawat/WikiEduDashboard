@@ -1,36 +1,37 @@
 import React from 'react';
+import createReactClass from 'create-react-class';
+import PropTypes from 'prop-types';
+import _ from 'lodash';
+
 import CourseUtils from '../../utils/course_utils.js';
 import Feedback from '../common/feedback.jsx';
 
 const userLink = (wiki, assignment) => {
+  if (!wiki) {
+    return <div key={`assignment_${assignment.id}`}>{assignment.username}</div>;
+  }
   const link = `https://${wiki.language}.${wiki.project}.org/wiki/User:${assignment.username}`;
   return <a key={`assignment_${assignment.id}`} href={link}>{assignment.username}</a>;
 };
 
-const Assignment = React.createClass({
+const Assignment = createReactClass({
   displayName: 'Assignment',
   propTypes: {
-    article: React.PropTypes.object,
-    assignmentGroup: React.PropTypes.array,
-    course: React.PropTypes.object,
-    current_user: React.PropTypes.object
+    article: PropTypes.object,
+    assignmentGroup: PropTypes.array,
+    course: PropTypes.object,
+    current_user: PropTypes.object
   },
   render() {
-    const article = this.props.article || CourseUtils.articleFromAssignment(this.props.assignmentGroup[0]);
-
+    if (!this.props.course.home_wiki) { return <div />; }
+    const article = this.props.article || CourseUtils.articleFromAssignment(this.props.assignmentGroup[0], this.props.course.home_wiki);
     if (!article.formatted_title) {
-      article.formatted_title = CourseUtils.formattedArticleTitle(
-        this.props.assignmentGroup[0].language,
-        this.props.assignmentGroup[0].project,
-        article.title
-      );
+      article.formatted_title = CourseUtils.formattedArticleTitle(article, this.props.course.home_wiki);
     }
-
     const className = 'assignment';
     const ratingClass = `rating ${article.rating}`;
     const ratingMobileClass = `${ratingClass} tablet-only`;
     const articleLink = <a onClick={this.stop} href={article.url} target="_blank" className="inline">{article.formatted_title}</a>;
-
     const assignees = [];
     const reviewers = [];
     const iterable = _.sortBy(this.props.assignmentGroup, 'username');

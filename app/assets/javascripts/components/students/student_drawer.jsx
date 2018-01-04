@@ -1,4 +1,6 @@
 import React from 'react';
+import createReactClass from 'create-react-class';
+import PropTypes from 'prop-types';
 import RevisionStore from '../../stores/revision_store.js';
 import TrainingStatusStore from '../../stores/training_status_store.js';
 import TrainingStatus from './training_status.jsx';
@@ -7,12 +9,12 @@ import DiffViewer from '../revisions/diff_viewer.jsx';
 const getRevisions = studentId => RevisionStore.getFiltered({ user_id: studentId });
 const getTrainingStatus = () => TrainingStatusStore.getModels();
 
-const StudentDrawer = React.createClass({
+const StudentDrawer = createReactClass({
   displayName: 'StudentDrawer',
 
   propTypes: {
-    student: React.PropTypes.object,
-    isOpen: React.PropTypes.bool
+    student: PropTypes.object,
+    isOpen: PropTypes.bool
   },
 
   mixins: [RevisionStore.mixin, TrainingStatusStore.mixin],
@@ -49,7 +51,7 @@ const StudentDrawer = React.createClass({
           <td className="desktop-only-tc">{rev.characters}</td>
           <td className="desktop-only-tc">{rev.views}</td>
           <td className="desktop-only-tc">
-            <DiffViewer revision={rev} />
+            <DiffViewer revision={rev} editors={[this.props.student]} />
           </td>
         </tr>
       );

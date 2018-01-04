@@ -5,6 +5,7 @@
 # Author: Hanyanbo98
 # Author: Liuxinyu970226
 # Author: Macofe
+# Author: NeverBehave
 # Author: Yfdyh000
 ---
 zh-CN:
@@ -32,6 +33,7 @@ zh-CN:
     recent_activity: 最近活动
     report_problem: 报告问题
     search: 提问问题
+    search_results: “%{search_terms}”的结果
     sign_up_extended: 注册维基百科
     sign_up_log_in_extended: 通过维基百科
     sign_up: 注册
@@ -52,7 +54,8 @@ zh-CN:
     orientation_notice: 在您创建课程之前，让我们通过迎新活动以帮助您了解如何入门。（这需要约30分钟完成。）
     review_orientation: 复核迎新活动
     start_orientation: 开始迎新活动
-    blog_headline: 来自Wiki Ed的最新新闻
+    blog_headline: 来自维基教育计划的最新新闻
+    about_programs: 本网站通过计划追踪wiki活跃——这是指个别活动，例如编辑松或学校课程。每个计划都是一个或多个运动的一部分，它们提供跨计划的聚合统计。
   home:
     explore: 探索
     log_in: 登录维基百科
@@ -67,6 +70,7 @@ zh-CN:
     available: 可用条目
     assigned_to: 分配给
     character_doc: 由登记编辑者在开始和结束日期之间，添加至条目的字符总和
+    deleted: （已删除）
     edited: 编辑的条目
     edited_by: 编辑者：
     edited_mobile: 条目
@@ -78,7 +82,7 @@ zh-CN:
     rating: 等级
     rating_doc: 条目的等级由维基百科的对应专题分配。这些等级可能与旧有版本相对应，因此这些评级只是粗略的条目成熟度指标。
     rating_docs:
-      fa: 特色条目 — 维基百科的最高评级，可能过于成熟而不适合作为新编辑者的主要项目目标
+      fa: 典范条目 — 维基百科的最高评级，可能过于成熟而不适合作为新编辑者的主要项目目标
       fl: 特色列表 — 维基百科用于列表的最高评级
       a: 甲级 — 十分完善的条目，可能过于成熟而不适合作为新编辑者的主要项目目标
       ga: 优良条目 — 一个组织良好的条目，可能过于成熟而不适合作为新编辑者的主要项目目标
@@ -91,8 +95,10 @@ zh-CN:
       does_not_exist: 此条目在维基百科不存在
     show_cumulative_changes: 显示累计更改
     show_current_version: 显示当前版本
+    show_current_version_with_authorship_highlighting: 当前版本w/作者高亮
     title: 标题
     title_example: 条目标题
+    tools: 评定工具
     view: 查看条目
     view_all: 查看全部
     view_doc: 在项目期间每个条目的访问量总数
@@ -108,13 +114,14 @@ zh-CN:
       but it does not take into account the content itself. (These scores are only
       available for English Wikipedia articles.)
   assignments:
-    article: 条目%{title}已被分配
+    article: 条目%{title}已分配给您。
     already_exists: 此分配已存在！
     title_too_large: 标题不应超过255个字符
     assignees: 委托人
     assign_other: 分配一个条目
     add_available: 添加一个可用条目
     assign_self: 给我自己分配一个条目
+    assign_tooltip: 一个分配的条目时您计划创建或改进的条目。
     confirm_add_available: 您确定要添加%{title}么？
     confirm_addition: 您确定要分配%{title}至%{username}？
     confirm_deletion: 您确定要删除此条目分配吗？
@@ -158,6 +165,20 @@ zh-CN:
     program_template_tooltip: 当组织者在此运动中创建程序时，此区域的文本将被复制为程序页面上的描述
     title: 标题
     use_start_end_dates: 使用开始和结束日期
+  categories:
+    add_category: 添加分类
+    add_template: 添加模板
+    add_this_category: 添加此分类
+    add_this_template: 添加此模板
+    confirm_category_addition: 您确定要追踪对分类“%{name}”的贡献么？
+    confirm_template_addition: 您确定要追踪对模板“%{name}”的贡献么？
+    depth: 子分类深度
+    name: 名称
+    category_name: 分类名称
+    template_name: 模板名称
+    none: 没有追踪的分类。
+    remove: 移除
+    tracked_categories: 追踪分类与模板
   chat:
     label: 聊天
   courses:
@@ -187,6 +208,7 @@ zh-CN:
     campaign_users: '%{title}位编辑者'
     confirm_course_deletion: 您是否要删除标题为%{title}的课程？如果是，输入课程标题以进行。
     confirm_course_deletion_failed: “%{title}”不是此课程的标题。课程未被删除。
+    confirm_manual_update: 您确定要运行手动更新么？最近修订版本将会导入，并且页面将会重新加载。此操作可能需要一些时间。
     course: 课程
     course_dates_calendar_instructions: 从时间表上选择日期以添加或移除它们（例如假日、不上课的时候）。点击日期以在未选择、已选择和假日状态之间更改。课程活动的日期将利用没有预定会议的周，对账户做出更改。
     course_description: 课程
@@ -204,10 +226,12 @@ zh-CN:
       clone_previous: 克隆上一个课程
       clone_this: 克隆此课程
       cloned_course_calendar_instructions: 从时间表上选择日期以添加或移除它们（例如假日、不上课的时候）。点击日期以在未选择、已选择和假日状态之间更改。如果您没有假日，请勾选“我没有班级假日”。克隆的时间轴将利用没有预定会议的周，自动对账户调整日期。
-      clone_successful: 课程已成功克隆
+      clone_successful: 已为克隆的课程更新详情
       clone_successful_details: 您的课程已被克隆，包含时间轴的要素（周和块）。请确保添加日期，这没有延续。您的课程有什么别的东西更改么？请现在随意地更新它吧。
       course_description: 课程描述
+      course_description_placeholder: 您的课程涵盖什么，以及学生在维基百科上做什么？请包括足够的细节，这样可以给其他维基百科编辑者背景信息，方便您的学生做出贡献。
       course_language: 主语言
+      course_private: 私有计划（只有管理员和辅助商可见）
       course_project: 主项目
       course_school: 课程学校
       course_subject: 课程科目
@@ -225,6 +249,8 @@ zh-CN:
       intro: 标题、学校和学期会创建您课程页面的URL，并且不能更改。除这些以外，您可以日后编辑。点击“创建我的课程！”以开始构造用于您维基百科任务分配的时间轴。
       new_or_clone: 您现在可以创建新的课程，或如果您希望从之前您教学的课程中复制，您可以将其克隆并设置新的日期。您也可以使用克隆选项来为您已经配置的课程创建额外的节。
       no_class_holidays: 我没有班级假日
+      role_description: 您在课程中的角色
+      role_description_placeholder: 导师、教学助理等
       save_cloned_course: 保存新的课程
       start_date: 开始日期
       start_date_placeholder: 开始日期（YYYY-MM-DD）
@@ -247,6 +273,7 @@ zh-CN:
     download_stats_data: 下载统计
     does_not_exist: 条目不存在。创建沙盒页面并将您分配给该页面以接收建议。
     duration: 课程持续时间
+    edit_count: 编辑数
     edit_course_dates: 编辑课程日期
     enable_chat: 启用聊天
     end: 结束
@@ -280,6 +307,7 @@ zh-CN:
       cannot_join_twice: 用户不可以2次加入同一课程。
       not_yet_approved: 此课程尚未批准登记。
     join_details: 要加入该程序，您需要获取密码——或包含密码的登记链接——来自导师。如果您尚未接收到密码，请联络您的导师。
+    join_no_passcode: 您确定要加入这个课程么？
     leave_confirmation: 您确定要离开这个课程么？
     leave_course: 离开课程
     loading: 正在载入…
@@ -292,6 +320,7 @@ zh-CN:
     none: 无
     notify_untrained_confirmation: 这将在讨论页为所有未能完成分配训练模块的学生发布一则提示。您确定要这样做么？
     no_available_actions: 无可用操作
+    ores_plot: ORES
     overview: 首页
     passcode: 密码
     passcode_none: 无密码
@@ -325,6 +354,7 @@ zh-CN:
     submitted: 已提交
     term: 学期
     timeline: 分配详细信息
+    timeline_enabled: 已启用时间轴
     timeline_link: 时间轴
     time_zone_message: 开始和结束时间会以您的本地时区显示。
     title: 标题
@@ -333,6 +363,7 @@ zh-CN:
     training_overdue: 培训模块“%{title}”已分配给该课程，并已于%{date}到期。
     unsubmitted: 未提交的课程
     untrained: 未经训练
+    update_stats: 更新统计
     uploads_none: 此班级没有贡献任何图片或其他媒体文件至维基共享资源。
     user_suggestions: 用户建议：
     user_suggestions_prompt: 您为条目编辑者提出的建议
@@ -374,6 +405,7 @@ zh-CN:
       clone_successful_details: 您的课程已被克隆。点击下方“保存”以完成课程。
       course_when: 在“何时”字段中添加一些内容（例如月和年）以区分它和原始内容。
       course_description: 程序描述
+      course_description_placeholder: 这个程序是什么，参与者将在wiki上做些什么？请包括足够的细节，这样可以给其他编辑者背景信息，方便参与者做出贡献。
       course_school: 机构
       course_term: 何时
       course_term_placeholder: 何时
@@ -426,6 +458,9 @@ zh-CN:
     edit_details: 编辑详情
     edit_template: 编辑模板
   metrics:
+    label: 课程活动
+    are_updated: 根据上次系统更新
+    last_update: 最后更新
     activity: 最近活跃
     are_trained: 最近培训
     articles_created: 创建的条目
@@ -492,10 +527,13 @@ zh-CN:
     time_doc: 在您本地时间内，每个修订的时间
     title: 标题
     view_on_wiki: 在wiki上查看差异
+    see_more: 查看更多
   suggestions:
     editing: 编辑建议
     suggestion_docs:
+      ga: 主题和风格专家的一些编辑是有帮助的；与现有类似话题的典范条目相比较也会突显内容的薄弱或缺失之处。
       list: 列表应为正常链至维基百科条目的链接列表，并应适当命名和组织。
+      future: 添加的材料可能存在投机炒作，并应仔细检查来源。
       '?': 建议不可用——条目未评级，或没有用于评级的建议。
       does_not_exist: 此条目在维基百科不存在。
   tasks:
@@ -623,6 +661,7 @@ zh-CN:
     username: 用户名
     username_placeholder: 用户名
     role:
+      description: 课程中的角色
       visitor: 访问者
       student: 学生
       instructor: 导师
@@ -646,7 +685,7 @@ zh-CN:
   wizard:
     assignment_dates: 分配日期
     assignment_description: 选择您的分配时间轴的开始和结束日期。例如，如果您希望在班级的第二周开始您的维基百科项目，将分配开始时间设置为课程开始时间之后的一周。此分配设计工具将创建适合您选择的时间轴日期的草稿时间轴。
-    assignment_type: 分配类型
+    assignment_type: 学生们将为其维基百科分配完成什么？
     calendar_instructions: 从时间表上选择日期以添加或移除它们（例如假日、不上课的时候）。这将帮助课程创建工具准确分隔您的分配。点击日期以在未选择、已选择和假日状态之间更改。如果您没有假日，请在下方勾选“我没有班级假日”。
     confirm_dates: 为您的课程选择课程日期、每周例会和假日。
     course_dates: 课程日期
@@ -673,6 +712,7 @@ zh-CN:
   error_401:
     header: 未获授权。>:-(
     explanation: 您未被授权执行此请求。如果您相信看见此通知是个错误，请联络此控制面板的维护人员以让他们了解有关问题的详情。
+    json_explanation: 看起来您已经退出。请刷新登录并重试。
   error_incorrect_passcode:
     header: 密码不正确。:-(
     explanation: 登记此课程的密码不正确。请向导师询问当前密码以登记此课程。

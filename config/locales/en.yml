@@ -57,6 +57,7 @@ en:
     recent_activity: Recent Activity
     report_problem: Report a problem
     search: ask a question
+    search_results: "Results for: '%{search_terms}'"
     sign_up_extended: Sign up with Wikipedia
     # FIXME: deprecate lego message
     sign_up_log_in_extended: with Wikipedia
@@ -92,7 +93,7 @@ en:
       started. (It takes about 30 minutes to complete.)
     review_orientation: Review Orientation
     start_orientation: Start Orientation
-    blog_headline: Recent News from Wiki Ed
+    blog_headline: Recent News from Wiki Education
     about_programs: >
       This site tracks wiki activities through Programs — individual events
       like an edit-a-thon or school course. Each Program is part of one
@@ -125,6 +126,7 @@ en:
       Mainspace pages edited between the start and end dates are listed below.
       The dashboard pulls in contributions from the home wiki of this program, along
       with any other wikis for which there is an Assignment or an Available Article.
+    deleted: (deleted)
     edited: Articles Edited
     edited_by: 'Edited by:'
     edited_mobile: Articles
@@ -149,8 +151,10 @@ en:
       does_not_exist: This article does not exist on Wikipedia
     show_cumulative_changes: Show Cumulative Changes
     show_current_version: Show Current Version
+    show_current_version_with_authorship_highlighting: 'Current Version w/ Authorship Highlighting'
     title: Title
     title_example: Article title
+    tools: Assessment tools
     view: View Article
     view_all: View All
     view_doc: The sum of all views to each article during the project
@@ -228,6 +232,21 @@ en:
     title: Title
     use_start_end_dates: Use start and end dates
 
+  categories:
+    add_category: Add category
+    add_template: Add template
+    add_this_category: Add this category
+    add_this_template: Add this template
+    confirm_category_addition: Are you sure you want to track contributions to the category "%{name}"?
+    confirm_template_addition: Are you sure you want to track contributions to the template "%{name}"?
+    depth: Subcategory depth
+    name: Name
+    category_name: Category name
+    template_name: Template name
+    none: There are no categories being tracked.
+    remove: Remove
+    tracked_categories: Tracked Categories & Templates
+
   chat:
     label: Chat
 
@@ -258,6 +277,7 @@ en:
     campaign_users: '%{title} Editors'
     confirm_course_deletion: Are you sure you want to delete the course titled %{title}? If so, type the title of the course to proceed.
     confirm_course_deletion_failed: '"%{title}" is not the title of this course. The course has not been deleted.'
+    confirm_manual_update: Are you sure you want to run a manual update? The most recent revisions will be imported and then the page will reload. This process may take some time.
     course: Course
     course_dates_calendar_instructions: >
       Select dates to add or remove them from the schedule (e.g., holidays, no
@@ -284,13 +304,18 @@ en:
         holiday state. If you have no holidays, check "I have no class holidays".
         The cloned timeline will automatically adjust the dates to account for
         weeks that have no scheduled meetings.
-      clone_successful: Course Successfully Cloned
+      clone_successful: Update Details for Cloned Course
       clone_successful_details: >
         Your course has been cloned, including the elements of the timeline
         (weeks and blocks). Be sure to add the dates, which are not carried over.
         Has anything else about your course changed? Feel free to update it now.
       course_description: Course description
+      course_description_placeholder: >
+        What is covered in your course, and what will students be doing on Wikipedia?
+        Please include enough detail to give other Wikipedia editors a sense of
+        context for the contributions your students will be making.
       course_language: Home language
+      course_private: Private program (viewable only by admins and facilitators)
       course_project: Home project
       course_school: Course school
       course_subject: Course subject
@@ -318,6 +343,8 @@ en:
         versions of the assignment options.) You can also use the clone option
         to create additional sections for a course you already set up.
       no_class_holidays: I have no class holidays
+      role_description: Your role in the course
+      role_description_placeholder: Instructor, teaching assistant, etc
       save_cloned_course: Save New Course
       start_date: Start date
       start_date_placeholder: Start date (YYYY-MM-DD)
@@ -352,6 +379,7 @@ en:
     download_stats_data: Download stats
     does_not_exist: The Article doesn't exist. Create a Sandbox page and assign yourself to that to receive suggestions.
     duration: Course Duration
+    edit_count: Edit Count
     edit_course_dates: Edit Course Dates
     enable_chat: Enable chat
     end: End
@@ -389,6 +417,7 @@ en:
       cannot_join_twice: Users may not join the same course twice.
       not_yet_approved: This course has not yet been approved for enrollment.
     join_details: To join this course, you need to get the passcode — or an enrollment link that includes the passcode — from the instructor. If you haven't received this, contact your instructor.
+    join_no_passcode: Are you sure you want to join this course?
     leave_confirmation: Are you sure you want to leave this course?
     leave_course: Leave course
     loading: Loading…
@@ -403,6 +432,7 @@ en:
       This will post a reminder on the talk pages for all students who overdue
       for completing assigned training modules. Are you sure you want to do this?
     no_available_actions: No available actions
+    ores_plot: ORES
     overview: Home
     passcode: Passcode
     passcode_none: No passcode
@@ -445,6 +475,7 @@ en:
     submitted: Submitted
     term: Term
     timeline: Assignment Details
+    timeline_enabled: Timeline enabled
     timeline_link: Timeline
     time_zone_message: Start and end times are displayed in your local time zone.
     title: Title
@@ -455,6 +486,7 @@ en:
       The training module "%{title}" is assigned for this course, and was due on %{date}.
     unsubmitted: Unsubmitted Courses
     untrained: Untrained
+    update_stats: Update statistics
     uploads_none: This class has not contributed any images or other media files to Wikimedia Commons.
     user_suggestions: 'User Suggestions:'
     user_suggestions_prompt: 'Your suggestions for the editors of the article'
@@ -504,6 +536,10 @@ en:
         Click 'Save' below to finalize it.
       course_when: Add something in the 'When' field (for example, the month and year) to differentiate it from the original.
       course_description: Program description
+      course_description_placeholder: >
+        What is this program, and what will participants be doing on the wiki(s)?
+        Please include enough detail to give other editors a sense of
+        context for the contributions that participants will be making.
       course_school: Institution
       course_term: When
       course_term_placeholder: When
@@ -565,6 +601,9 @@ en:
     rename_confirmation: The course fields that form the URL have changed. This will change the URL and break any incoming links. Are you sure you want to do this?
 
   metrics:
+    label: Course Activity
+    are_updated: According to the last system update
+    last_update: Last update
     activity: Recent Activity
     are_trained: are up-to-date with training
     articles_created: Articles Created
@@ -634,6 +673,7 @@ en:
     time_doc: The time of each revision in your local time
     title: Title
     view_on_wiki: View diff on wiki
+    see_more: See more
 
   # Suggestions source: https://en.wikipedia.org/wiki/Template:Grading_scheme
   suggestions:
@@ -796,6 +836,7 @@ en:
     username_placeholder: Username
 
     role:
+      description: Role in course
       visitor: Visitor
       student: Student
       instructor: Instructor
@@ -830,7 +871,7 @@ en:
       the assignment start date to one week after the course's start date. This
       assignment design tool will create a draft timeline that fits within the
       timeline dates you choose.
-    assignment_type: Assignment Type
+    assignment_type: What will students complete for their Wikipedia assignment?
     calendar_instructions: >
       Select dates to add or remove them from the schedule (e.g., holidays, no
       school). This helps the course creation tool accurately space out your
@@ -875,6 +916,8 @@ en:
       You are not authorized to execute this request. If you believe you have
       reached this notice in error, please contact the maintainers of this
       dashboard to let them know about the problem.
+    json_explanation: >
+      It looks like you've gotten logged out. Please refresh, log in, and try again.
 
   error_incorrect_passcode:
     header: "Incorrect passcode.  :-("

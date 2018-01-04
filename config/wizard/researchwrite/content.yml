@@ -6,7 +6,7 @@
 # 1. Assignment
 # 2. Milestone
 # 3. Custom
-# 4. Training
+# 4. Handouts
 
 # Week weight
 # - The app will attempt to evenly distribute weights across the course timeline
@@ -276,24 +276,26 @@ essentials:
       -
         if: working_in_groups
         title: Best practices for working in groups
-        kind: 1
+        kind: 3
         content: |
           <ul>
             <li>
-              Make sure everyone in the group is assigned to the same Wikipedia
-              article on the Students tab of this course page.
+              Once your group has a Wikipedia article to work on, make sure
+              everyone in the group is assigned to that article on the Students
+              tab of this course page.
             </li>
             <li>
               Select one group member whose Sandbox space you'll all share to
-              draft your article. Each person should link to that shared Sandbox
-              from their own Sandbox page. A sandbox is like any other page on
-              Wikipedia, and anyone can edit it.
+              draft your article. (It will be titled something like
+              <code>User:Diderot/sandbox</code>.) Each person should link to
+              that shared Sandbox from their own Sandbox page. A sandbox is like
+              any other page on Wikipedia, and anyone can edit it.
             </li>
             <li>
-              Wikipedia doesn't allow multiple people to edit from different
-              devices at the same time. If you're working together in person,
-              one person should add the work to the Sandbox. If you are all
-              working independently, make small edits and save often to avoid
+              Wikipedia doesn't handle multiple people editing from different
+              devices at the same time very well. If you're working together in
+              person, one person should add the work to the Sandbox. If you are
+              all working independently, make small edits and save often to avoid
               "editing conflicts" with classmates. Make sure that you're logged
               in under your own Wikipedia account while editing in your
               classmate's sandbox to ensure your edits are recorded.
@@ -308,6 +310,7 @@ essentials:
         if: explore_to_find_articles
         title: Choose possible topics
         kind: 1
+        training_module_ids: [17] # Find Your Article
         content: |
           <ul>
             <li>Review page 6 of your <a href="https://wikiedu.org/editingwikipedia">Editing Wikipedia</a> guidebook.</li>
@@ -358,6 +361,11 @@ essentials:
             </li>
           </ul>
 
+      -
+        if: choose_articles_from_list
+        title: Guide(s) for writing articles in your topic area
+        kind: 4 # Special subject-specific guides block
+
   - # Week five
     weight: 4
     blocks:
@@ -386,6 +394,11 @@ essentials:
               </ul>
             </li>
           </ul>
+
+      -
+        if: explore_to_find_articles
+        title: Guide(s) for writing articles in your topic area
+        kind: 4 # Special subject-specific guides block
 
       -
         title: Draft your article
@@ -500,7 +513,7 @@ essentials:
               tab, assign them to yourself to review.
             </li>
             <li>
-              Peer review your classmates' drafts. Leave suggestions on on the
+              Peer review your classmates' drafts. Leave suggestions on the
               Talk page of the article, or sandbox, that your fellow student is
               working on. Other editors may be reviewing your work, so look for
               their comments! Be sure to acknowledge feedback from other Wikipedians.
@@ -526,7 +539,7 @@ essentials:
               tab, assign them to yourself to review.
             </li>
             <li>
-              Peer review your classmates' drafts. Leave suggestions on on the
+              Peer review your classmates' drafts. Leave suggestions on the
               Talk page of the article, or sandbox, that your fellow student is
               working on. Other editors may be reviewing your work, so look for
               their comments! Be sure to acknowledge feedback from other Wikipedians.
@@ -589,7 +602,7 @@ essentials:
           <p><strong>Creating a new article?</strong></p>
           <ul>
             <li>Read <a href="https://wikiedu.org/editingwikipedia">Editing Wikipedia</a> page 13, and follow those steps to move your article from your Sandbox to Mainspace.</li>
-            <li>You can also review the <a href="../../../training/students/sandboxes">Sandboxes and Mainspace</a> online training.</li>
+            <li>You can also review the <a href="https://dashboard.wikiedu.org/training/students/sandboxes">Sandboxes and Mainspace</a> online training.</li>
           </ul>
 
       -

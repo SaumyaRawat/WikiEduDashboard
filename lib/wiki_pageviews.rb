@@ -53,7 +53,7 @@ class WikiPageviews
     start_date = 50.days.ago
     end_date = 1.day.ago
     url = query_url(start_date: start_date, end_date: end_date)
-    parse_results(api_get url)
+    parse_results(api_get(url))
   end
 
   def query_url(start_date:, end_date:)
@@ -102,7 +102,8 @@ class WikiPageviews
     return unless response
     data = Utils.parse_json(response)
     return data['items'] if data['items']
-    return no_results if data['type'] == 'https://restbase.org/errors/not_found'
+    # As of October 2017, the data type is https://www.mediawiki.org/wiki/HyperSwitch/errors/not_found
+    return no_results if data['type'] =~ %r{errors/not_found}
     raise PageviewApiError, response
   end
 

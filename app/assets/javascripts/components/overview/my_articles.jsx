@@ -1,16 +1,18 @@
 import React from 'react';
+import createReactClass from 'create-react-class';
+import PropTypes from 'prop-types';
 import AssignCell from '../students/assign_cell.jsx';
 import AssignmentStore from '../../stores/assignment_store.js';
 import ServerActions from '../../actions/server_actions.js';
 import MyAssignment from './my_assignment.jsx';
 
-const MyArticles = React.createClass({
+const MyArticles = createReactClass({
   displayName: 'MyArticles',
 
   propTypes: {
-    course: React.PropTypes.object,
-    current_user: React.PropTypes.object,
-    course_id: React.PropTypes.string
+    course: PropTypes.object,
+    current_user: PropTypes.object,
+    course_id: PropTypes.string
   },
 
   componentDidMount() {
@@ -38,11 +40,21 @@ const MyArticles = React.createClass({
       );
     });
 
+    let findYourArticleTraining;
+    if (Features.wikiEd && !assignmentCount) {
+      findYourArticleTraining = (
+        <a href="/training/students/finding-your-article" target="_blank" className="button ghost-button small">
+          How to find an article
+        </a>
+      );
+    }
+
     return (
       <div className="module my-articles">
         <div className="section-header my-articles-header">
           <h3>{I18n.t('courses.my_articles')}</h3>
           <div className="controls">
+            {findYourArticleTraining}
             <AssignCell
               id="user_assigned"
               course={this.props.course}

@@ -26,9 +26,11 @@ lb:
     recent_activity: Rezent Aktivitéit
     report_problem: E Problem mellen
     search: eng Fro stellen
+    search_results: 'Resultater fir: %{search_terms}'
     sign_up_extended: Mat Wikipedia umellen
     sign_up_log_in_extended: mat Wikipedia
     sign_up: Schreift Iech an
+    submit: Schécken
     training: Formatioun
     change: Änneren
     details: Detailer
@@ -37,7 +39,7 @@ lb:
     explore_course_pages: D'Säite vun de Coursen entdecken
     explore_examples: Beispiller entdecken
     review_orientation: Orientatioun nokucken
-    blog_headline: Rezent Neiegkeete vu Wiki Ed
+    blog_headline: Rezent Neiegkeete vu Wiki Education
   home:
     explore: Entdecken
     log_in: Mat Wikipedia aloggen
@@ -49,6 +51,7 @@ lb:
   articles:
     assigned: Assignéiert Artikelen
     available: Disponibel Artikelen
+    deleted: (geläscht)
     edited: Geännert Artikelen
     edited_by: 'Geännert vum:'
     edited_mobile: Artikelen
@@ -84,7 +87,7 @@ lb:
     wiki: Wiki
   assignments:
     title_too_large: Den Titel däerf net méi wéi 255 Zeechen hunn
-    add_available: En disponibelen Artikel derbäisetzen
+    add_available: En disponibelen Artikel dobäisetzen
     no_available: Dëse Cours huet keng disponibel Artikelen.
     remove: Ewechhuelen
     review_self: En Artikel nokucken
@@ -93,7 +96,7 @@ lb:
     milestones:
       title: Kilometersténg
   campaign:
-    add_organizer: Organisateur derbäisetzen
+    add_organizer: Organisateur dobäisetzen
     campaign: Campagne
     campaigns: Campagnen
     campaign_not_updated: Campagne konnt net aktualiséiert ginn
@@ -104,6 +107,15 @@ lb:
     organizers: Organisateuren
     title: Titel
     use_start_end_dates: Ufanks- a Schlussdatumer benotzen
+  categories:
+    add_category: Kategorie dobäisetzen
+    add_template: Schabloun dobäisetzen
+    add_this_category: Dës Kategorie dobäisetzen
+    add_this_template: Dës Schabloun dobäisetzen
+    name: Numm
+    category_name: Numm vun der Kategorie
+    template_name: Numm vun der Schabloun
+    remove: Ewechhuelen
   chat:
     label: Chat
   courses:
@@ -127,7 +139,7 @@ lb:
     creator:
       clone_previous: Virege Cours klonen
       clone_this: Dëse Cours klonen
-      clone_successful: Cours gekloont
+      clone_successful: Detailer fir gekloonte Cours aktualiséieren
       course_description: Beschreiwung vum Cours
       course_language: Originalsprooch
       course_subject: Sujet vum Cours
@@ -138,6 +150,7 @@ lb:
       expected_number: Erwaart Zuel vu Studenten
       find: Äre Cours fannen
       no_class_holidays: Ech hu keng Schoulvakanzen
+      role_description: Är Roll am Cours
       save_cloned_course: Neie Cours späicheren
       start_date: Ufanksdatum
       start_date_placeholder: Ufanksdatum (JJJJ-MM-DD)
@@ -151,6 +164,7 @@ lb:
       wëllt?
     download_stats_data: Statistiken eroflueden
     duration: Dauer vum Cours
+    edit_count: Zuel vun den Ännerungen
     edit_course_dates: Datume vum Cours änneren
     enable_chat: Chat aktivéieren
     end: Schluss
@@ -175,6 +189,7 @@ lb:
     join_failed: Aschreiwung huet net funktionéiert.
     join_failure_details:
       cannot_join_twice: Benotzer kënne sech net zweemol an deeselwechte Cours aschreiwen.
+    join_no_passcode: Sidd Dir sécher datt Dir an dëse Cours goe wëllt?
     leave_confirmation: Sidd Dir sécher datt Dir aus dësem Cours erausgoe wëllt?
     leave_course: Aus dem Cours erausgoen
     loading: Lueden...
@@ -184,6 +199,7 @@ lb:
     nocourse: huet bei kengem Cours matgemaach.
     none: Keng
     no_available_actions: Keng disponibel Aktiounen
+    ores_plot: ORES
     overview: Haaptsäit
     revisions_doc: D'Zuel vun den ännerungen an de leschten %{timeframe}-Deeg
     school: Schoul
@@ -203,8 +219,10 @@ lb:
     user_role: Roll
     course_details: Detailer vum Cours
     subject: Sujet
+    timeline_enabled: Zäitplang aktivéiert
     timeline_link: Chronologie
     title: Titel
+    update_stats: Statistiken aktualiséieren
     user_suggestions: 'Benotzervirschléi:'
     user_suggestions_prompt: Är Virschléi fir d'Auteure vum Artikel
     view_other: Aner Campagne kucken
@@ -238,7 +256,7 @@ lb:
       participate_in_campaign: Bei enger Campagne matmaachen
       save_cloned_course: Späicheren
     delete_course: Programm läschen
-    enroll: Auteur derbäisetzen
+    enroll: Auteur dobäisetzen
     enrollment: Participatioun
     join_course: Beim Programm matmaachen
     leave_course: Programm verloossen
@@ -258,6 +276,7 @@ lb:
     edit_details: Detailer änneren
     edit_template: Schabloun änneren
   metrics:
+    last_update: Lescht Aktualisatioun
     activity: Rezent Aktivitéit
     articles_edited: Geännert Artikelen
     characters: Buschtawen
@@ -270,7 +289,7 @@ lb:
     uploads_in_use_count:
       one: Fichier deen an Artikele benotzt gëtt
       other: Fichieren déi an Artikele  benotzt ginn
-    word_count: Wierder derbäigesat
+    word_count: Wierder dobäigesat
     word_count_average: Duerchschnëttlech Zuel vu Wierder
   namespace:
     user: Benotzernummraum
@@ -298,6 +317,7 @@ lb:
     time_doc: D'Zäit vun all Versioun an Ärer lokaler Zäit
     title: Titel
     view_on_wiki: Ënnerscheed op der Wiki weisen
+    see_more: Méi gesinn
   suggestions:
     editing: Virschléi änneren
     suggestion_docs:
@@ -347,7 +367,7 @@ lb:
     contribution_statistics: Statistik vun de Kontributiounen
     course_passcode: 'Passcode:'
     editors: Auteuren
-    enroll_confirmation: Sidd Dir sécher datt Dir %{username} derbäisetze wëllt?
+    enroll_confirmation: Sidd Dir sécher datt Dir %{username} dobäisetze wëllt?
     enrolled_success: '%{username} gouf dobäigesat!'
     first_name: Virnumm
     last_name: Familljennumm
@@ -383,7 +403,7 @@ lb:
     instructors_student_impact: Gesamtimpakt duerch Studente vum %{username}
     disclaimer: D'Informatioun déi dir ugitt gëtt ëffentlech disponibel gemaach.
     bio_placeholder: Är Biographie dobäisetzen (fakultativ)
-    location_placeholder: Setzt Är Plaz derbäi (fakultativ)
+    location_placeholder: Setzt Är Plaz dobäi (fakultativ)
     institution_placeholder: Numm vun der Institutioun (fakultativ)
   wizard:
     course_dates: Datume vun de Coursen
@@ -403,6 +423,8 @@ lb:
       header: Net ënnerstëtzte Browser. :-(
   error_401:
     header: Net autoriséiert.>:-(
+    json_explanation: Et gesäit esou aus wéi wann Dir ausgeloggt gouf. Aktualiséiert
+      w.e.g., loggt Iech an a probéiert nach eng Kéier.
   error_404:
     header: Säit net fonnt. :-(
   error_500:

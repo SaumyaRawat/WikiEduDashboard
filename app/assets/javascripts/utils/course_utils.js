@@ -1,3 +1,4 @@
+import _ from 'lodash';
 const I18n = require('i18n-js');
 
 const CourseUtils = class {
@@ -88,27 +89,22 @@ const CourseUtils = class {
     };
   }
 
-  articleFromAssignment(assignment) {
-    const language = assignment.language || 'en';
-    const project = assignment.project || 'wikipedia';
+  articleFromAssignment(assignment, defaultWiki) {
+    const language = assignment.language || defaultWiki.language || 'en';
+    const project = assignment.project || defaultWiki.project || 'wikipedia';
     const articleUrl = assignment.article_url || this.urlFromTitleAndWiki(assignment.article_title, language, project);
-    const formattedTitle = this.formattedArticleTitle(
-      language,
-      project,
-      assignment.article_title
-    );
     const article = {
       rating: assignment.article_rating,
       rating_num: assignment.article_rating_num,
       pretty_rating: assignment.article_pretty_rating,
       url: articleUrl,
       title: assignment.article_title,
-      formatted_title: formattedTitle,
       article_id: assignment.article_id,
       language,
       project,
       new: false
     };
+    article.formatted_title = this.formattedArticleTitle(article, defaultWiki);
     return article;
   }
 
@@ -117,22 +113,29 @@ const CourseUtils = class {
     return `https://${language}.${project}.org/wiki/${underscoredTitle}`;
   }
 
-  formattedArticleTitle(language, project, articleTitle) {
+  formattedArticleTitle(article, defaultWiki) {
     let languagePrefix = '';
-    if (language === undefined || language === 'en') {
+    if (!defaultWiki || !article.language || article.language === defaultWiki.language) {
       languagePrefix = '';
     } else {
-      languagePrefix = `${language}:`;
+      languagePrefix = `${article.language}:`;
     }
 
     let projectPrefix = '';
-    if (project === undefined || project === 'wikipedia') {
+    if (!defaultWiki || article.project === defaultWiki.project || !article.project) {
       projectPrefix = '';
     } else {
-      projectPrefix = `${project}:`;
+      projectPrefix = `${article.project}:`;
     }
 
-    return `${languagePrefix}${projectPrefix}${articleTitle}`;
+    return `${languagePrefix}${projectPrefix}${article.title}`;
+  }
+
+  formattedCategoryName(category, defaultWiki) {
+    category.title = category.name;
+    category.language = category.wiki.language;
+    category.project = category.wiki.project;
+    return this.formattedArticleTitle(category, defaultWiki);
   }
 
   hasTrainings(weeks) {

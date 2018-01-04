@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require "#{Rails.root}/lib/modified_revisions_manager"
 
 #= Updates articles to reflect deletion and page moves on Wikipedia
@@ -128,7 +129,7 @@ class ArticleStatusManager
   # URI length limit.
   # TODO: move the chunking to Replica and set the size dynamically depending on the
   # length of the URI.
-  LONG_URI_LANGUAGES = %w[he ar].freeze
+  LONG_URI_LANGUAGES = %w(he ar ml mk).freeze
   HIGH_REPLICA_LIMIT = 80
   LOW_REPLICA_LIMIT = 20
   def articles_per_replica_query

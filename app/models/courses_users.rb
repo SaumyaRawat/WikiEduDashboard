@@ -16,6 +16,7 @@
 #  recent_revisions       :integer          default(0)
 #  character_sum_draft    :integer          default(0)
 #  real_name              :string(255)
+#  role_description       :string(255)
 #
 
 require "#{Rails.root}/lib/utils"
@@ -32,7 +33,7 @@ class CoursesUsers < ActiveRecord::Base
 
   has_many :survey_notifications
 
-  validates :course_id, uniqueness: { scope: [:user_id, :role] }
+  validates :course_id, uniqueness: { scope: %i[user_id role] }
 
   scope :current, -> { joins(:course).merge(Course.current).distinct }
   scope :ready_for_update, -> { joins(:course).merge(Course.ready_for_update).distinct }
@@ -80,8 +81,12 @@ class CoursesUsers < ActiveRecord::Base
     role.positive? && user.permissions == 1 && user.greeter == false
   end
 
+  def live_revisions
+    course.revisions.joins(:article).where(user_id: user.id).live
+  end
+
   def update_cache
-    revisions = course.revisions.joins(:article).where(user_id: user.id)
+    revisions = live_revisions
     self.character_sum_ms = character_sum(revisions, Article::Namespaces::MAINSPACE)
     self.character_sum_us = character_sum(revisions, Article::Namespaces::USER)
     self.character_sum_draft = character_sum(revisions, Article::Namespaces::DRAFT)

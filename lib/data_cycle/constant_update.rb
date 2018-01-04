@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require "#{Rails.root}/lib/data_cycle/batch_update_logging"
 require "#{Rails.root}/lib/course_revision_updater"
 require "#{Rails.root}/lib/assignment_updater"
@@ -21,14 +22,9 @@ class ConstantUpdate
     setup_logger
     set_courses_to_update
     return if updates_paused?
-    return unless no_other_updates_running?
+    return if conflicting_updates_running?
 
-    begin
-      create_pid_file
-      run_update
-    ensure
-      delete_pid_file
-    end
+    run_update_with_pid_files(:constant)
   end
 
   private
@@ -39,16 +35,21 @@ class ConstantUpdate
   end
 
   def run_update
-    log_start_of_update
+    log_start_of_update 'Constant update tasks are beginning.'
     update_revisions_and_articles
     update_new_article_views unless ENV['no_views'] == 'true'
     update_new_article_ratings
     import_uploads_for_needs_update_courses
+    update_categories_for_needs_update_courses
     update_all_caches # from CacheUpdater
     remove_needs_update_flags
     update_status_of_ungreeted_students if Features.wiki_ed?
     generate_alerts # from UpdateCycleAlertGenerator
     log_end_of_update 'Constant update finished.'
+  # rubocop:disable Lint/RescueException
+  rescue Exception => e
+    log_end_of_update 'Constant update failed.'
+    raise e
   end
 
   ###############
@@ -90,8 +91,13 @@ class ConstantUpdate
   # are removed.
   def import_uploads_for_needs_update_courses
     log_message 'Backfilling Commons uploads for needs_update courses'
-    UploadImporter.import_all_uploads User.joins(:courses).where( courses: { needs_update: true } ).distinct
+    UploadImporter.import_all_uploads User.joins(:courses).where(courses: { needs_update: true }).distinct
     UploadImporter.update_usage_count_by_course Course.where(needs_update: true)
+  end
+
+  # As with commons uploads, this is done normally in DailyUpdate
+  def update_categories_for_needs_update_courses
+    Category.refresh_categories_for(Course.where(needs_update: true))
   end
 
   #################################
@@ -104,23 +110,10 @@ class ConstantUpdate
     end
   end
 
-  def no_other_updates_running?
-    return false if daily_update_running?
-    return false if constant_update_running?
-    return false if update_waiting_to_run?
-    true
-  end
-
-  def create_pid_file
-    File.open(CONSTANT_UPDATE_PID_FILE, 'w') { |f| f.puts Process.pid }
-  end
-
-  def delete_pid_file
-    File.delete CONSTANT_UPDATE_PID_FILE if File.exist? CONSTANT_UPDATE_PID_FILE
-  end
-
-  def log_start_of_update
-    @start_time = Time.zone.now
-    Rails.logger.info 'Constant update tasks are beginning.'
+  def conflicting_updates_running?
+    return true if update_running?(:daily)
+    return true if update_running?(:constant)
+    return true if update_waiting_to_run?
+    false
   end
 end

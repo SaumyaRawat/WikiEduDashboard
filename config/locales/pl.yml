@@ -477,6 +477,7 @@ pl:
       również sam adres URL niniejszej strony, co może mieć wpływ na już rozesłane
       linki. Czy na pewno chcesz kontynuować?
   metrics:
+    last_update: Ostatnia aktualizacja
     activity: Ostatnia aktywność
     are_trained: uczestników ukończyło wymagane etapy szkolenia
     articles_created: Utworzone artykuły
@@ -544,6 +545,7 @@ pl:
     time_doc: Czas każdej zmiany w Twoim czasie lokalnym
     title: Tytuł
     view_on_wiki: Zobacz porównanie wersji na wiki
+    see_more: Zobacz więcej
   suggestions:
     editing: Sugestie edycyjne
     suggestion_docs:

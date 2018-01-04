@@ -1,6 +1,6 @@
 import '../../testHelper';
 import React from 'react';
-import ReactTestUtils, { Simulate } from 'react-addons-test-utils';
+import ReactTestUtils, { Simulate } from 'react-dom/test-utils';
 import McFly from 'mcfly';
 
 const Flux = new McFly();
@@ -12,7 +12,7 @@ import Notifications from '../../../app/assets/javascripts/components/common/not
 describe('Notifications', () => {
   it('renders', () => {
     const rendered = ReactTestUtils.renderIntoDocument(
-      <Notifications />
+      <Notifications store={reduxStore} />
     );
     expect(rendered).to.exist;
   });
@@ -22,7 +22,7 @@ describe('Notifications', () => {
 
     const rendered = ReactTestUtils.renderIntoDocument(
       <div>
-        <Notifications />
+        <Notifications store={reduxStore} />
       </div>
     );
 

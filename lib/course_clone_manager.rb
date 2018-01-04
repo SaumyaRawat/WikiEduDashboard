@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 #= Procedures for creating a duplicate of an existing course for reuse
 class CourseCloneManager
   def initialize(course, user)
@@ -17,6 +18,10 @@ class CourseCloneManager
     tag_course
     copy_campaigns if Features.open_course_creation?
     return @clone
+  # If a course with the new slug already exists — an incomplete clone of the
+  # same course — then return the previously-created clone.
+  rescue ActiveRecord::RecordNotUnique
+    return Course.find_by(slug: @clone.slug)
   end
 
   private

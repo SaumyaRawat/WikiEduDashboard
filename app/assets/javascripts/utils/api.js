@@ -1,13 +1,6 @@
+import _ from 'lodash';
 import { capitalize } from './strings';
-
-const logErrorMessage = function (obj, prefix) {
-  // readyState 0 usually indicates that the user navigated away before ajax
-  // requests resolved.
-  if (obj.readyState === 0) { return; }
-  let message = prefix || 'Error: ';
-  message += (obj.responseJSON && obj.responseJSON.message) || obj.statusText;
-  return console.log(message); // eslint-disable-line no-console
-};
+import logErrorMessage from './log_error_message';
 
 const RavenLogger = {};
 
@@ -52,6 +45,23 @@ const API = {
   fetchRevisions(studentId, courseId) {
     return new Promise((res, rej) => {
       const url = `/revisions.json?user_id=${studentId}&course_id=${courseId}`;
+      return $.ajax({
+        type: 'GET',
+        url,
+        success(data) {
+          return res(data);
+        }
+      })
+      .fail((obj) => {
+        logErrorMessage(obj);
+        return rej(obj);
+      });
+    });
+  },
+
+  fetchCourseRevisions(courseId, limit) {
+    return new Promise((res, rej) => {
+      const url = `/courses/${courseId}/revisions.json?limit=${limit}`;
       return $.ajax({
         type: 'GET',
         url,
@@ -254,23 +264,6 @@ const API = {
         type: 'POST',
         url: `/clone_course/${id}`,
         success(data) {
-          console.log('Received course clone');
-          return res(data);
-        }
-      })
-      .fail((obj) => {
-        logErrorMessage(obj);
-        return rej(obj);
-      })
-    );
-  },
-
-  fetchCampaign(slug) {
-    return new Promise((res, rej) =>
-      $.ajax({
-        type: 'GET',
-        url: `/campaigns/${slug}.json`,
-        success(data) {
           return res(data);
         }
       })
@@ -320,7 +313,6 @@ const API = {
         type: 'DELETE',
         url: `/assignments/${assignment.assignment_id}?${queryString}`,
         success(data) {
-          console.log('Deleted assignment');
           return res(data);
         }
       })
@@ -338,7 +330,6 @@ const API = {
         type: 'POST',
         url: `/assignments.json?${queryString}`,
         success(data) {
-          console.log('Created assignment');
           return res(data);
         }
       })
@@ -356,7 +347,6 @@ const API = {
         type: 'PUT',
         url: `/assignments/${opts.id}.json?${queryString}`,
         success(data) {
-          console.log('Updated assignment');
           return res(data);
         }
       })
@@ -424,7 +414,6 @@ module_id=${opts.module_id}&\
 user_id=${opts.user_id}&\
 slide_id=${opts.slide_id}`,
         success(data) {
-          console.log('Slide completed');
           return res(data);
         }
       })
@@ -483,7 +472,6 @@ slide_id=${opts.slide_id}`,
         contentType: 'application/json',
         data: JSON.stringify(req_data),
         success(data) {
-          console.log('Saved timeline!');
           return res(data);
         }
       })
@@ -504,7 +492,6 @@ slide_id=${opts.slide_id}`,
   },
 
   saveCourse(data, courseId = null) {
-    console.log("API: saveCourse");
     const append = (courseId != null) ? `/${courseId}` : '';
     // append += '.json'
     const type = (courseId != null) ? 'PUT' : 'POST';
@@ -589,7 +576,6 @@ slide_id=${opts.slide_id}`,
         type: 'DELETE',
         url: `/courses/${course_id}/delete_all_weeks.json`,
         success(data) {
-          console.log(data);
           return res(data);
         }
       })
@@ -658,7 +644,6 @@ slide_id=${opts.slide_id}`,
         contentType: 'application/json',
         data: JSON.stringify({ wizard_output: data }),
         success(data) {
-          console.log('Submitted the wizard answers!');
           return res(data);
         }
       })
@@ -678,7 +663,6 @@ slide_id=${opts.slide_id}`,
         contentType: 'application/json',
         data: JSON.stringify(data),
         success(data) {
-          console.log((capitalize(verb) + ' ' + model));
           return res(data);
         }
       })

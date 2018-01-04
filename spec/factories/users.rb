@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: users
@@ -25,7 +26,7 @@
 #  registered_at       :datetime
 #
 
-FactoryGirl.define do
+FactoryBot.define do
   factory :test_user, class: User do
     username 'Pizza'
     onboarded true

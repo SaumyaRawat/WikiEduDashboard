@@ -1,4 +1,6 @@
 import React from 'react';
+import createReactClass from 'create-react-class';
+import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import * as AlertActions from '../../actions/alert_actions.js';
@@ -14,17 +16,17 @@ const getState = () =>
   })
 ;
 
-const GetHelpButton = React.createClass({
+const GetHelpButton = createReactClass({
   displayName: 'GetHelpButton',
 
   propTypes: {
-    currentUser: React.PropTypes.object,
-    course: React.PropTypes.object,
-    open: React.PropTypes.func,
-    is_open: React.PropTypes.bool,
-    alertSubmitting: React.PropTypes.bool,
-    alertCreated: React.PropTypes.bool,
-    actions: React.PropTypes.object
+    currentUser: PropTypes.object,
+    course: PropTypes.object,
+    open: PropTypes.func,
+    is_open: PropTypes.bool,
+    alertSubmitting: PropTypes.bool,
+    alertCreated: PropTypes.bool,
+    actions: PropTypes.object
   },
 
   mixins: [UserStore.mixin],
@@ -175,7 +177,7 @@ const GetHelpButton = React.createClass({
         <div className="get-help-submitted">
           <p className="text-center"><strong>Message sent!</strong></p>
           <p>
-            We'll get back to you within 1 business day. Be sure to check your email for a response.
+            We&apos;ll get back to you within 1 business day. Be sure to check your email for a response.
           </p>
           <a href="#" className="button" onClick={this.reset}>Ok</a>
         </div>
@@ -200,11 +202,11 @@ const GetHelpButton = React.createClass({
     } else {
       if (this.props.currentUser.role > 0) {
         faqLink = (
-          <a className="button dark stacked" href="http://ask.wikiedu.org/questions/scope:all/sort:activity-desc/tags:instructorfaq/page:1/" target="blank">Instructor FAQ</a>
+          <a className="button dark stacked" href="https://ask.wikiedu.org/questions/scope:all/sort:activity-desc/tags:instructorfaq/page:1/" target="blank">Instructor FAQ</a>
         );
       } else {
         faqLink = (
-          <a className="button dark stacked" href="http://ask.wikiedu.org/questions/scope:all/sort:activity-desc/tags:studentfaq/page:1/" target="blank">Student FAQ</a>
+          <a className="button dark stacked" href="https://ask.wikiedu.org/questions/scope:all/sort:activity-desc/tags:studentfaq/page:1/" target="blank">Student FAQ</a>
         );
       }
 
@@ -212,7 +214,7 @@ const GetHelpButton = React.createClass({
         <div className="get-help-info">
           <p>
             <strong>
-              Hi! if you need help with your Wikipedia assignment, you've come
+              Hi! if you need help with your Wikipedia assignment, you&apos;ve come
               to the right place!
             </strong>
           </p>

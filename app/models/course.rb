@@ -43,6 +43,8 @@
 #  needs_update          :boolean          default(FALSE)
 #  chatroom_id           :string(255)
 #  flags                 :text(65535)
+#  level                 :string(255)
+#  private               :boolean          default(FALSE)
 #
 
 require "#{Rails.root}/lib/course_cache_manager"
@@ -65,6 +67,8 @@ class Course < ActiveRecord::Base
   has_many :instructors, -> { where('courses_users.role = 1') },
            through: :courses_users, source: :user
   has_many :volunteers, -> { where('courses_users.role > 1') },
+           through: :courses_users, source: :user
+  has_many :staff, -> { where('courses_users.role = 4') },
            through: :courses_users, source: :user
   has_many :survey_notifications, dependent: :destroy
 
@@ -91,6 +95,9 @@ class Course < ActiveRecord::Base
 
   has_many :assignments, dependent: :destroy
 
+  has_many :categories_courses, class_name: 'CategoriesCourses', dependent: :destroy
+  has_many :categories, through: :categories_courses
+
   ############
   # Metadata #
   ############
@@ -115,6 +122,7 @@ class Course < ActiveRecord::Base
   # Scopes #
   ##########
 
+  scope :nonprivate, -> { where(private: false) }
   # Legacy courses are ones that are imported from the EducationProgram
   # MediaWiki extension, not created within the dashboard via the wizard.
   scope :legacy, -> { where(type: 'LegacyCourse') }
@@ -169,20 +177,21 @@ class Course < ActiveRecord::Base
 
   has_attached_file :syllabus
   validates_attachment_content_type :syllabus,
-                                    content_type: %w(application/pdf application/msword)
+                                    content_type: %w[application/pdf application/msword]
 
   validates :passcode, presence: true, if: :passcode_required?
   validates :start, presence: true
   validates :end, presence: true
+  validates :home_wiki_id, presence: true
 
-  COURSE_TYPES = %w(
+  COURSE_TYPES = %w[
     LegacyCourse
     ClassroomProgramCourse
     VisitingScholarship
     Editathon
     BasicCourse
     ArticleScopedProgram
-  ).freeze
+  ].freeze
   validates_inclusion_of :type, in: COURSE_TYPES
 
   #############
@@ -221,6 +230,10 @@ class Course < ActiveRecord::Base
     campaigns.any?
   end
 
+  def tag?(query_tag)
+    tags.pluck(:tag).include? query_tag
+  end
+
   def training_modules
     @training_modules ||= TrainingModule.all.select { |tm| training_module_ids.include?(tm.id) }
   end
@@ -229,6 +242,24 @@ class Course < ActiveRecord::Base
     @training_module_ids ||= Block.joins(:week).where(weeks: { course_id: id })
                                   .where.not('training_module_ids = ?', [].to_yaml)
                                   .collect(&:training_module_ids).flatten
+  end
+
+  # TODO: Replace this with a CoursesWikis join table to keep track of which
+  # wikis go with any given course.
+  def wiki_ids
+    ([home_wiki_id] + revisions.pluck('DISTINCT wiki_id')).uniq
+  end
+
+  def scoped_article_ids
+    assigned_article_ids + category_article_ids
+  end
+
+  def assigned_article_ids
+    assignments.pluck(:article_id)
+  end
+
+  def category_article_ids
+    categories.inject([]) { |ids, cat| ids + cat.article_ids }
   end
 
   # The url for the on-wiki version of the course.
@@ -240,13 +271,12 @@ class Course < ActiveRecord::Base
     "#{home_wiki.base_url}/wiki/#{wiki_title}"
   end
 
-  def update(data={}, should_save=true)
-    self.attributes = data[:course]
-    save if should_save
-  end
-
   def new_articles
     articles_courses.live.new_article.joins(:article).where('articles.namespace = 0')
+  end
+
+  def new_articles_on(wiki)
+    new_articles.where("articles.wiki_id = #{wiki.id}")
   end
 
   def uploads_in_use
@@ -266,6 +296,11 @@ class Course < ActiveRecord::Base
   # Overidden by ClassroomProgramCourse
   def assignment_edits_enabled?
     wiki_edits_enabled?
+  end
+
+  # Overidden by ClassroomProgramCourse
+  def timeline_enabled?
+    flags[:timeline_enabled].present?
   end
 
   #################
@@ -339,8 +374,6 @@ class Course < ActiveRecord::Base
   # Check if course times are invalid and if yes, set the end time to be the same
   # as that of the start time
   def check_course_times
-    if start > self.end
-      self.end = start
-    end
+    self.end = start if start > self.end
   end
 end

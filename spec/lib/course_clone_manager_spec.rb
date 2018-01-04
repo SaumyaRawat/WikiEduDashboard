@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'rails_helper'
 require "#{Rails.root}/lib/course_clone_manager"
 
@@ -120,6 +121,15 @@ describe CourseCloneManager do
 
     it 'carries over campaigns' do
       expect(clone.campaigns.first.id).to eq(1)
+    end
+  end
+
+  context 'when a course with the same temporary slug already exists' do
+    before { CourseCloneManager.new(Course.find(1), User.find(1)).clone! }
+    it 'returns the existing clone' do
+      existing_clone = Course.last
+      reclone = CourseCloneManager.new(Course.find(1), User.find(1)).clone!
+      expect(reclone).to eq(existing_clone)
     end
   end
 

@@ -1,6 +1,6 @@
 import '../../testHelper';
 import React from 'react';
-import ReactTestUtils from 'react-addons-test-utils';
+import ReactTestUtils from 'react-dom/test-utils';
 import Student from '../../../app/assets/javascripts/components/students/student.jsx';
 import { click } from '../../customUtils.js';
 
@@ -32,6 +32,7 @@ describe('Student', () => {
     <table>
       <tbody>
         <Student
+          store={reduxStore}
           student={studentUser}
           course={course}
           course_id="Couse_school/Foo_(Couse_term)"

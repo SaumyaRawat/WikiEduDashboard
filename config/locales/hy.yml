@@ -65,6 +65,7 @@ hy:
     view: Դիտել հոդվածը
     view_all: Դիտել բոլորը
     view_on_wiki: Դիտել Վիքիյում
+    wiki: Վիքի
   assignments:
     already_exists: Այս անվանումով հանձնարարություն արդեն գոյություն ունի։
     assignees: Կատարողներ
@@ -163,6 +164,7 @@ hy:
     loading: Բեռնել վերանայումները․․․
     time_doc: Յուրաքանչյուր վերանայման ժամանակը տեղական ժամանակով
     title: Վերնագիր
+    see_more: Տեսնել ավելին
   suggestions:
     suggestion_docs:
       does_not_exist: 'Այս հոդվածը Վիքիպեդիայում գոյություն չունի:'

@@ -1,5 +1,9 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+import createReactClass from 'create-react-class';
 import { browserHistory } from 'react-router';
+import _ from 'lodash';
+
 import TrainingStore from '../stores/training_store.js';
 import TrainingActions from '../actions/training_actions.js';
 import ServerActions from '../../actions/server_actions.js';
@@ -11,11 +15,11 @@ const md = require('../../utils/markdown_it.js').default({ openLinksExternally: 
 
 const getState = () => TrainingStore.getState();
 
-const TrainingSlideHandler = React.createClass({
+const TrainingSlideHandler = createReactClass({
   displayName: 'TrainingSlideHandler',
 
   propTypes: {
-    params: React.PropTypes.object
+    params: PropTypes.object
   },
 
   mixins: [TrainingStore.mixin],
@@ -104,7 +108,6 @@ const TrainingSlideHandler = React.createClass({
     }
     if (e.which === this.keys.rightKey && this.state.nextSlide) {
       if (this.disableNext()) { return; }
-      this.setSlideCompleted(this.props.params.slide_id);
       const params = _.extend(navParams, { slide_id: this.state.nextSlide.slug });
       return browserHistory.push(this.trainingUrl(params));
     }
@@ -130,7 +133,7 @@ const TrainingSlideHandler = React.createClass({
       nextLink = (
         <SlideLink
           slideId={this.state.nextSlide.slug}
-          direction="Next"
+          buttonText={this.state.currentSlide.buttonText || "Next Page"}
           disabled={this.disableNext()}
           button={true}
           params={this.props.params}

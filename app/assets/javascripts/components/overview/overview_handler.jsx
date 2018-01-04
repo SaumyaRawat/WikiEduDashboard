@@ -1,4 +1,6 @@
 import React from 'react';
+import createReactClass from 'create-react-class';
+import PropTypes from 'prop-types';
 import CourseStats from './course_stats.jsx';
 import AvailableActions from './available_actions.jsx';
 import Description from './description.jsx';
@@ -26,13 +28,13 @@ const getState = () =>
   })
 ;
 
-const Overview = React.createClass({
+const Overview = createReactClass({
   displayName: 'Overview',
 
   propTypes: {
-    current_user: React.PropTypes.object,
-    course_id: React.PropTypes.string,
-    location: React.PropTypes.object
+    current_user: PropTypes.object,
+    course_id: PropTypes.string,
+    location: PropTypes.object
   },
 
   mixins: [WeekStore.mixin, CourseStore.mixin, AssignmentStore.mixin],
@@ -53,7 +55,7 @@ const Overview = React.createClass({
   render() {
     const userRoles = UserUtils.userRoles(this.props.current_user, UserStore);
 
-    if (this.props.location.query.modal === 'true' && this.state.course.id) {
+    if (this.state.course.cloned_status === 1) {
       return (
         <CourseClonedModal
           course={this.state.course}
@@ -114,10 +116,20 @@ const Overview = React.createClass({
       <div className="sidebar" />
     );
 
+    let courseStatistics;
+    if (!this.state.course.ended && !Features.wikiEd) {
+      courseStatistics = (
+        <div className="pull-right">
+          <small>{I18n.t('metrics.are_updated')}. {I18n.t('metrics.last_update')}: {this.state.course.last_update ? moment(this.state.course.last_update).fromNow() : '-'}</small>
+        </div>
+      );
+    }
+
     return (
       <section className="overview container">
         { syllabusUpload }
         <CourseStats course={this.state.course} />
+        {courseStatistics}
         {userArticles}
         <div className="primary">
           {primaryContent}

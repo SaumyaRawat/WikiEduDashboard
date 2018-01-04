@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: assignment_suggestions
@@ -11,8 +12,7 @@
 #  user_id       :integer
 #
 
-
-FactoryGirl.define do
+FactoryBot.define do
   factory :assignment_suggestion do
     text 'Improve this article'
   end
